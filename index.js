@@ -76,8 +76,24 @@ let check = true;
                 const viewDepartmentInput = await Question.promptViewByDepartment(viewDepartmentOptions);
                 await chosenOption.viewByDepartment(viewDepartmentInput.department);
                 break;
-            case 'delete department, roles, or employee':
-                console.log('delete');
+            case 'delete department, role, or employee':
+                const firstChoice = await Question.promptDelete();
+                const firstChoiceReady = firstChoice.delete.toLowerCase().trim();
+                const deleteInstance = new Question();
+                if (firstChoiceReady === 'department') {
+                    const deleteDepartmentOptions = await deleteInstance.pullOptionsFromDepartment();
+                    const deleteDepartmentInput = await Question.promptDeleteDepartment(deleteDepartmentOptions);
+                    await chosenOption.deleteDepartment(deleteDepartmentInput.department);
+                } else if (firstChoiceReady === 'role') {
+                    const deletePositionOptions = await deleteInstance.pullOptionsFromPosition();
+                    const deletePositionInput = await Question.promptDeletePosition(deletePositionOptions);
+                    await chosenOption.deletePosition(deletePositionInput.role);
+                } else if (firstChoiceReady === 'employee') {
+                    const deleteEmployeeOptions = await deleteInstance.pullOptionsFromEmployees();
+                    const deleteEmployeeInput = await Question.promptDeleteEmployee(deleteEmployeeOptions);
+                    await chosenOption.deleteEmployee(deleteEmployeeInput.employee);
+                }
+                console.log(`Successfully deleted that ${firstChoiceReady}!`);
                 break;
             case 'view budget of department':
                 const budgetInstance = new Question();
@@ -92,7 +108,7 @@ let check = true;
                 check = false;
                 break;
             default:
-                console.log('Invalid option', chosenOption.option);
+                console.log('Invalid option');
                 break;
         }
     };

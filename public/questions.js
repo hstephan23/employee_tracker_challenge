@@ -100,7 +100,7 @@ class Question {
     };
 
     async viewEmployees() {
-        const sql = `SELECT employee.id AS id, employee.first_name AS first_name, role.title AS title, department.name AS department, role.salary AS salary, manager.name AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id JOIN manager ON employee.manager_id = manager.id ORDER BY employee.id;`;
+        const sql = `SELECT employee.id AS id, employee.first_name AS first_name, role.title AS title, department.name AS department, role.salary AS salary, IFNULL(manager.name, 'Self') AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN manager ON employee.manager_id = manager.id ORDER BY employee.id;`;
         try {
             const [results] = await this.db.query(sql);
             const formattedData = results.map(result => ({
@@ -172,6 +172,7 @@ class Question {
             throw error;
         }
     }
+
     async viewByDepartment(department) {
         try {
             const sql = `SELECT employee.first_name as first_name, employee.last_name as last_name, department.name AS department FROM employee JOIN role on employee.role_id = role.id JOIN department on role.department_id = department.id WHERE department.name = '${department}' ORDER BY employee.first_name`
@@ -208,6 +209,38 @@ class Question {
         }
     };
 
+    async deleteDepartment(option) {
+        try {
+            const sql = `DELETE FROM department WHERE name = '${option}';`;
+            const [results] = await this.db.query(sql);
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    async deletePosition(option) {
+        try {
+            const sql = `DELETE FROM role WHERE title = '${option}';`;
+            const [result] = await this.db.query(sql);
+            
+        } catch (error) {
+            console.log(error);
+        } 
+    };
+
+    async deleteEmployee(option) {
+        try {
+            const splitName = option.split(' ');
+            const firstName = splitName[0].trim();
+            const lastName = splitName[1].trim();
+            const sql = `DELETE FROM employee WHERE first_name = '${firstName}' AND last_name = '${lastName}';`;
+            const [results] = await this.db.query(sql);
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
     async quit() {
         console.log('Goodbye!');
     };
@@ -317,7 +350,7 @@ class Question {
                 type: 'list',
                 name: 'options',
                 message: 'What would you like to do?',
-                choices: ['Add Employee', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'View All Employees', 'Update Employee Role', 'Update Employee Manager', 'View Employees By Manager', 'View Employees By Department', 'Delete Department, Roles, or Employee', 'View Budget of Department', 'Quit']
+                choices: ['Add Employee', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'View All Employees', 'Update Employee Role', 'Update Employee Manager', 'View Employees By Manager', 'View Employees By Department', 'Delete Department, Role, or Employee', 'View Budget of Department', 'Quit']
             }
         ])
     };
@@ -450,6 +483,51 @@ class Question {
             }
         ])
     }
+    
+    static async promptDelete() {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'delete',
+                message: 'Which do you want to delete?',
+                choices: ['Department', 'Role', 'Employee']
+            }
+        ])
+    }
+
+    static async promptDeleteDepartment(options) {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'department',
+                message: 'Which department do you want to delete?',
+                choices: options
+            }
+        ])
+    }; 
+
+    static async promptDeletePosition(options) {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'role',
+                message: 'Which role do you want to delete?',
+                choices: options
+            }
+        ])
+    };
+
+    static async promptDeleteEmployee(options) {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employee',
+                message: 'Which employee do you want to delete?',
+                choices: options
+            }
+        ])
+    };
+
 };
 
 
