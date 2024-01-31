@@ -4,13 +4,13 @@ CREATE DATABASE employee_db;
 USE employee_db;
 
 CREATE TABLE department(
-    id INT NOT NULL,
+    id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(30),
     PRIMARY KEY (id)
 );
 
 CREATE TABLE role(
-    id INT NOT NULL, 
+    id INT NOT NULL AUTO_INCREMENT, 
     title VARCHAR(30) NOT NULL,
     salary DEC NOT NULL,
     department_id INT,
