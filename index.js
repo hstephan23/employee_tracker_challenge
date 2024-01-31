@@ -58,12 +58,16 @@ let check = true;
                 await chosenOption.viewEmployees();
                 break;
             case 'update employee manager':
-                console.log('update employee manager');
+                const updateManagerInstance = new Question();
+                const employeeOptions = await updateManagerInstance.pullOptionsFromEmployees();
+                const updateManagerOptions = await updateManagerInstance.pullOptionsFromManager();
+                const updateManagerInput = await Question.promptUpdateManager(employeeOptions, updateManagerOptions);
+                await chosenOption.updateManager(updateManagerInput.manager, updateManagerInput.employee);
                 break;
             case 'view employees by manager':
                 const managerInstance = new Question();
                 const viewManagerOptions = await managerInstance.pullOptionsFromManager();
-                const viewManagerInput = await Question.promptManagerUpdate(viewManagerOptions);
+                const viewManagerInput = await Question.promptManagerView(viewManagerOptions);
                 await chosenOption.viewByManager(viewManagerInput.manager);
                 break;
             case 'view employees by department':
