@@ -33,15 +33,17 @@ let check = true;
             case 'update employee role':
                 const updateInstance = new Question();
                 const updateOptions = await updateInstance.pullOptionsFromUpdate();
-                console.log(updateOptions);
-                const updateInput = await Question.promptUpdate(updateOptions);
-                await chosenOption.updateEmployee();
+                const positionOptions = await updateInstance.pullOptionsFromPosition();
+                const updateInput = await Question.promptUpdate(updateOptions, positionOptions);
+                await chosenOption.updateEmployee(updateInput.employee, updateInput.newPosition);
                 break;
             case 'view all roles':
                 await chosenOption.viewRoles();
                 break;
             case 'add role':
-                const roleInput = await Question.promptRole();
+                const roleInstance = new Question();
+                const roleOptions = await roleInstance.pullOptionsFromRoles();
+                const roleInput = await Question.promptRole(roleOptions);
                 await chosenOption.addRole(roleInput.roleName, roleInput.salary, roleInput.roleDepartment);
                 break;
             case 'view all departments':

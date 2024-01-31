@@ -12,8 +12,23 @@ class Question {
         });
     };
 
-    async updateEmployee() {
-        console.log('Updated the employee!');
+    async updateEmployee(fullName, position) {
+        try {
+            const connection = await this.db.getConnection();
+            const arrayOfName = fullName.split(' ');
+            const firstName = arrayOfName[0].trim();
+            const lastName = arrayOfName[1].trim();
+            const positionSql = `SELECT id FROM role WHERE title = '${position}'`
+            const [result] = await this.db.query(positionSql);
+            const sql = `UPDATE employee SET role_id = ${result[0].id} WHERE first_name = '${firstName}' AND last_name = '${lastName}';`;
+            const [results] = await this.db.query(sql);
+            connection.release();
+            console.log('Updated the employee!');
+        } catch (error) {
+            console.log(error);
+        } finally {
+            await this.db.end();
+        }
     };
 
     async pullOptionsFromUpdate() {
@@ -25,6 +40,20 @@ class Question {
                 const name = results[i].first_name + ' ' + results[i].last_name;
                 options.push(name);
             }
+            return options;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    
+    async pullOptionsFromPosition() {
+        const sql = `SELECT title FROM role`;
+        try {
+            const [results] = await this.db.query(sql);
+            let options = [];
+            for (let i = 0; i < results.length; i++) {
+                options.push(results[i].title);
+            } 
             return options;
         } catch (error) {
             console.log(error);
@@ -67,7 +96,7 @@ class Question {
             const sql = `INSERT INTO role (title, salary, department_id) VALUES ('${title}', ${salary}, ${department_id});`
             const [results] = await this.db.query(sql);
             connection.release();
-            console.log("Added the role!", results);
+            console.log("Added the role!");
         } catch (error) {
             console.log(error);
         } finally {
@@ -175,7 +204,7 @@ class Question {
         ])
     };
 
-    static async promptRole() {
+    static async promptRole(options) {
         return inquirer.prompt([
             {
                 type: 'input',
@@ -191,7 +220,7 @@ class Question {
                type: 'list',
                name: 'roleDepartment',
                message: 'Which department does the role belong to?',
-               choices: ['Engineering', 'Web Development', 'Administration']
+               choices: options
             }
         ])
     };
@@ -236,13 +265,19 @@ class Question {
         }
     };
 
-    static async promptUpdate(options) {
+    static async promptUpdate(options, optionsPosition) {
         return inquirer.prompt([
             {
                 type: 'list',
                 name: 'employee',
                 message: 'Which employee would you like to update?',
                 choices: options
+            },
+            {
+                type: 'list',
+                name: 'newPosition',
+                message: 'What is their role going to be?',
+                choices: optionsPosition
             }
         ])
     };
