@@ -156,6 +156,42 @@ class Question {
         }
     };
 
+    async viewByDepartment(department) {
+        try {
+            const sql = `SELECT employee.first_name as first_name, employee.last_name as last_name, department.name AS department FROM employee JOIN role on employee.role_id = role.id JOIN department on role.department_id = department.id WHERE department.name = '${department}' ORDER BY employee.first_name`
+            const [results] = await this.db.query(sql);
+            const formattedData = results.map(result => ({
+                first_name: result.first_name,
+                last_name: result.last_name,
+                department: result.department
+            }));   
+            console.table(formattedData);
+            return results;     
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    };
+
+    async updateManager(manager, employee) {
+        try {
+            const connection = await this.db.getConnection();
+            const arrayOfName = employee.split(' ');
+            const firstName = arrayOfName[0].trim();
+            const lastName = arrayOfName[1].trim();
+            const managerSql = `SELECT id FROM manager WHERE name = '${manager}';`;
+            const [result] = await this.db.query(managerSql);
+            const sql = `UPDATE employee SET manager_id = ${result[0].id} WHERE first_name = '${firstName}' AND last_name = '${lastName}';`
+            const [results] = await this.db.query(sql);
+            connection.release();
+            console.log('Updated the manager!');
+        } catch (error) {
+            console.log(error);
+        } finally {
+            await this.db.end();
+        }
+    };
+
     async quit() {
         console.log('Goodbye!');
     };
@@ -232,18 +268,33 @@ class Question {
     };
     
     async pullOptionsFromEmployees() {
-        const sql = 'Select first_name, last_name FROM employee;'
+        const sql = 'SELECT first_name, last_name FROM employee;'
         try {
             const [results] = await this.db.query(sql);
             let options = [];
             for (let i = 0; i < results.length; i++) {
                 options.push(results[i].first_name + ' ' + results[i].last_name);
-            }
+            };
             return options
         } catch (error) {
             console.log(error);
         }
-    }
+    };
+
+    async pullOptionsFromDepartment() {
+        const sql = 'SELECT name FROM department;'
+        try {
+            const [results] = await this.db.query(sql);
+            let options = [];
+            for (let i = 0; i < results.length; i++) {
+                options.push(results[i].name);
+            };
+            return options;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     static async promptUser() {
         return inquirer.prompt([
             {
@@ -361,6 +412,17 @@ class Question {
             }
         ])
     };
+    
+    static async promptViewByDepartment(options) {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'department',
+                message: 'Which department do you want to view?',
+                choices: options
+            }
+        ])
+    }
 };
 
 

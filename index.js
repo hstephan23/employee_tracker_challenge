@@ -71,6 +71,10 @@ let check = true;
                 await chosenOption.viewByManager(viewManagerInput.manager);
                 break;
             case 'view employees by department':
+                const departmentInstance = new Question();
+                const viewDepartmentOptions = await departmentInstance.pullOptionsFromDepartment();
+                const viewDepartmentInput = await Question.promptViewByDepartment(viewDepartmentOptions);
+                await chosenOption.viewByDepartment(viewDepartmentInput.department);
                 console.log('employes by department');
                 break;
             case 'delete department, roles, or employee':
