@@ -31,7 +31,8 @@ let check = true;
                 await chosenOption.viewRoles();
                 break;
             case 'add role':
-                await chosenOption.addRole();
+                const roleInput = await Question.promptRole();
+                await chosenOption.addRole(roleInput.roleName, roleInput.salary, roleInput.roleDepartment);
                 break;
             case 'view all departments':
                 await chosenOption.viewDepartments();
