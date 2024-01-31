@@ -7,7 +7,7 @@ class Question {
         this.db = mysql.createPool({
                 host: 'localhost',
                 user: 'root',
-                password: 'kajTun-wykse4-myrmiv',
+                password: '',
                 database: 'employee_db'
         });
     };
