@@ -142,7 +142,7 @@ class Question {
     
     async viewByManager(manager) {
         try {
-            const sql = `SELECT employee.first_name as first_name, employee.last_name as last_name, manager.name as Manager FROM employee JOIN manager on employee.manager_id = manager.id WHERE manager.name = '${manager}' ORDER BY manager.name;`
+            const sql = `SELECT employee.first_name as first_name, employee.last_name as last_name, manager.name as Manager FROM employee JOIN manager ON employee.manager_id = manager.id WHERE manager.name = '${manager}' ORDER BY manager.name;`
             const [results] = await this.db.query(sql);
             const formattedData = results.map(result => ({
                 first_name: result.first_name,
@@ -156,7 +156,22 @@ class Question {
             throw error;
         }
     };
-
+    
+    async viewBudget(department) {
+        try {
+            const sql = `SELECT SUM(salary) AS total_sum, department.name AS department FROM role JOIN department ON role.department_id = department.id WHERE department.name = '${department}';`;
+            const [results] = await this.db.query(sql);
+            const formattedData = results.map(result => ({
+                department: result.department,
+                total_cost: result.total_sum
+            }));
+            console.table(formattedData);
+            return results;
+        } catch (error) {
+            console.log('error');
+            throw error;
+        }
+    }
     async viewByDepartment(department) {
         try {
             const sql = `SELECT employee.first_name as first_name, employee.last_name as last_name, department.name AS department FROM employee JOIN role on employee.role_id = role.id JOIN department on role.department_id = department.id WHERE department.name = '${department}' ORDER BY employee.first_name`
@@ -420,6 +435,17 @@ class Question {
                 type: 'list',
                 name: 'department',
                 message: 'Which department do you want to view?',
+                choices: options
+            }
+        ])
+    }
+
+    static async promptViewByBudget(options) {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'department',
+                message: 'Which department budget do you want to view?',
                 choices: options
             }
         ])

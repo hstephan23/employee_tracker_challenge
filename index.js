@@ -75,12 +75,16 @@ let check = true;
                 const viewDepartmentOptions = await departmentInstance.pullOptionsFromDepartment();
                 const viewDepartmentInput = await Question.promptViewByDepartment(viewDepartmentOptions);
                 await chosenOption.viewByDepartment(viewDepartmentInput.department);
-                console.log('employes by department');
                 break;
             case 'delete department, roles, or employee':
                 console.log('delete');
                 break;
             case 'view budget of department':
+                const budgetInstance = new Question();
+                const viewDepartments = await budgetInstance.pullOptionsFromDepartment();
+                const budgetInput = await Question.promptViewByBudget(viewDepartments);
+                await chosenOption.viewBudget(budgetInput.department);
+
                 console.log('budget');
                 break;
             case 'quit':
