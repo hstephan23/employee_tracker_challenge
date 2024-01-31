@@ -7,7 +7,7 @@ class Question {
         this.db = mysql.createPool({
                 host: 'localhost',
                 user: 'root',
-                password: 'kajTun-wykse4-myrmiv',
+                password: '',
                 database: 'employee_db'
         });
     };
@@ -49,7 +49,7 @@ class Question {
                 department_id = 0;
             }
 
-            const sql = `INSERT INTO role (title, salary, department_id) VALUES ('${title}', '${salary}', ${department_id});`
+            const sql = `INSERT INTO role (title, salary, department_id) VALUES ('${title}', ${salary}, ${department_id});`
             const [results] = await this.db.query(sql);
             connection.release();
             console.log("Added the role!", results);
@@ -77,8 +77,19 @@ class Question {
         }
     };
 
-    async addDepartment() {
-        console.log('Added the department!');
+    async addDepartment(name) {
+        try {
+            const connection = await this.db.getConnection();
+            const sql = `INSERT INTO department (name) VALUES ('${name}');`
+            const [result] = await this.db.query(sql);
+
+            connection.release();
+            console.log('Added the department!');
+        } catch (error) {
+            console.log(error);
+        } finally {
+            await this.db.end();
+        }
     };
 
     async viewEmployees() {
@@ -101,8 +112,41 @@ class Question {
         }
     };
 
+    async addEmployee(firstName, lastName, position, manager) {
+        try {
+            const connection = await this.db.getConnection();
+            const role_id = `SELECT id FROM role WHERE title = '${position}'`
+            const [result] = await this.db.query(role_id);
+            console.log(result);
+            const id = result[0].id;
+            const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${firstName}', '${lastName}', ${id}, ${manager})`;
+            const [results] = await this.db.query(sql);
+
+            connection.release();
+            console.log('Added the employee!');
+        } catch (error) {
+            console.log(error);
+        } finally {
+            await this.db.end();
+        }
+    ;}
+
     async quit() {
         console.log('Quit');
+    };
+
+    async pullOptionsFromDB() {
+        const sql = `SELECT title FROM role`;
+        try {
+            const [results] = await this.db.query(sql);
+            let options = [];
+            for (let i = 0; i < results.length; i++) {
+                options.push(results[i].title);
+            }
+            return options;
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     static async promptUser() {
@@ -111,7 +155,7 @@ class Question {
                 type: 'list',
                 name: 'options',
                 message: 'What would you like to do?',
-                choices: ['Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'View All Employees', 'Quit']
+                choices: ['Add Employee', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'View All Employees', 'Update Employee Role', 'Quit']
             }
         ])
     };
@@ -135,6 +179,46 @@ class Question {
                choices: ['Engineering', 'Web Development', 'Administration']
             }
         ])
+    };
+
+    static async promptDepartment() {
+        return inquirer.prompt([
+            {
+                type: 'input',
+                name: 'departmentName',
+                message: 'What is the name of the department?'
+            }
+        ])
+    };
+
+    static async promptEmployee(options) {
+        try {
+            return inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'firstName',
+                    message: "What is the employee's first name?"
+                },
+                {
+                    type: 'input',
+                    name: 'lastName',
+                    message: "What is the employee's last name?"
+                },
+                {
+                    type: 'list',
+                    name: 'position',
+                    message: "What is the employee's role?",
+                    choices: options
+                },
+                {
+                    type: 'input',
+                    name: 'manager',
+                    message: "What is the employee's manager id?"
+                }
+            ])
+        } catch (error) {
+            console.log(error);
+    }
     }
 };
 

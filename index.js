@@ -24,6 +24,12 @@ let check = true;
         const chosenOption = new Question(userInput.options);
         const optionValue = chosenOption.option.toLowerCase().trim();
         switch (optionValue) {
+            case 'add employee':
+                const employeeInstance = new Question();
+                const options = await employeeInstance.pullOptionsFromDB();
+                const employeeInput = await Question.promptEmployee(options);
+                await chosenOption.addEmployee(employeeInput.firstName, employeeInput.lastName, employeeInput.position, employeeInput.manager);
+                break;
             case 'update employee role':
                 await chosenOption.updateEmployee();
                 break;
@@ -38,7 +44,8 @@ let check = true;
                 await chosenOption.viewDepartments();
                 break;
             case 'add department':
-                await chosenOption.addDepartment();
+                const departmentInput = await Question.promptDepartment();
+                await chosenOption.addDepartment(departmentInput.departmentName);
                 break;
             case 'view all employees':
                 await chosenOption.viewEmployees();
