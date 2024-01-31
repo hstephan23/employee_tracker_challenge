@@ -1,39 +1,40 @@
 const inquirer = require('inquirer');
+const mysql = require('mysql2');
+
 class Question {
     constructor (option) {
         this.option = option;
     };
 
-    updateEmplopyee () {
+    static async updateEmployee () {
         console.log('update');
-        
     };
 
-    viewRoles () {
+    static async viewRoles () {
         console.log('View role');
     };
-
-    addRole() {
+    
+    static async addRole() {
         console.log('Add role');
     };
 
-    viewDepartments() {
+    static async viewDepartments() {
         console.log('View departments');
     };
 
-    addDepartment() {
+    static async addDepartment() {
         console.log('Add department');
     };
 
-    viewEmployees() {
+    static async viewEmployees() {
         console.log('View employees');
     };
 
-    quit() {
+    static async quit() {
         console.log('Quit');
     };
 
-    static promptUser() {
+    static async promptUser() {
         return inquirer.prompt([
             {
                 type: 'list',
