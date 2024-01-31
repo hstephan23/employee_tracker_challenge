@@ -1,14 +1,15 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2/promise');
+require('dotenv').config();
 
 class Question {
     constructor (option) {
         this.option = option;
         this.db = mysql.createPool({
-                host: 'localhost',
-                user: 'root',
-                password: '',
-                database: 'employee_db'
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER,
+                password: process.env.DB_PASSWORD,
+                database: process.env.DB_NAME
         });
     };
 
