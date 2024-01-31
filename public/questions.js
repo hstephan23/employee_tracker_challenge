@@ -159,7 +159,14 @@ class Question {
     
     async viewBudget(department) {
         try {
-            const sql = `SELECT SUM(salary) AS total_sum, department.name AS department FROM role JOIN department ON role.department_id = department.id WHERE department.name = '${department}';`;
+            const idSql = `SELECT role.id, department.name FROM role JOIN department ON role.department_id = department.id WHERE department.name = '${department}';`
+            const [idResults] = await this.db.query(idSql);
+            const idArray = [];
+            for (let i = 0; i < idResults.length; i++) {
+                idArray.push(`employee.role_id = ${idResults[i].id}`);
+            }
+            const idString = idArray.join(' OR ');
+            const sql = `SELECT SUM(role.salary) AS total_sum, department.name AS department FROM role JOIN department ON role.department_id = department.id JOIN employee ON employee.role_id = role.id WHERE department.name = '${department}' AND (${idString}) GROUP BY department.name;`;
             const [results] = await this.db.query(sql);
             const formattedData = results.map(result => ({
                 department: result.department,

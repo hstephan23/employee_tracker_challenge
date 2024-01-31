@@ -56,3 +56,16 @@ JOIN manager on employee.manager_id = manager.id
 WHERE manager.name = 'Steve Jobs'
 ORDER BY manager.name;
 
+-- choosing the role id
+SELECT role.id, department.name
+FROM role
+JOIN department ON role.department_id = department.id
+WHERE department.name = 'Web Development';
+
+-- selecting based on the salary
+SELECT SUM(role.salary) AS total_sum, department.name AS department 
+FROM role 
+JOIN department ON role.department_id = department.id 
+JOIN employee ON employee.role_id = role.id
+WHERE department.name = 'Web Development' AND (employee.role_id = 3 OR employee.role_id = 4)
+GROUP BY department.name;
