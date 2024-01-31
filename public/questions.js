@@ -4,10 +4,27 @@ const mysql = require('mysql2');
 class Question {
     constructor (option) {
         this.option = option;
+        this.db = mysql.createConnection(
+            {
+                host: 'localhost',
+                user: 'root',
+                password: '',
+                database: 'employee_db'
+            }
+        );
     };
 
-    static async updateEmployee () {
-        console.log('update');
+    static async updateEmployee() {
+        const sql = `SELECT department.id AS id, department.name AS name, role.title AS title FROM department JOIN role ON department.id = role.department_id`;
+        return new Promise((resolve, reject) => {
+            this.db.query(sql, (err, results) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
     };
 
     static async viewRoles () {
