@@ -25,25 +25,25 @@ let check = true;
         const optionValue = chosenOption.option.toLowerCase().trim();
         switch (optionValue) {
             case 'update employee role':
-                await Question.updateEmployee();
+                await chosenOption.updateEmployee();
                 break;
             case 'view all roles':
-                await Question.viewRoles();
+                await chosenOption.viewRoles();
                 break;
             case 'add role':
-                await Question.addRole();
+                await chosenOption.addRole();
                 break;
             case 'view all departments':
-                await Question.viewDepartments();
+                await chosenOption.viewDepartments();
                 break;
             case 'add department':
-                await Question.addDepartment();
+                await chosenOption.addDepartment();
                 break;
             case 'view all employees':
-                await Question.viewEmployees();
+                await chosenOption.viewEmployees();
                 break;
             case 'quit':
-                await Question.quit();
+                await chosenOption.quit();
                 check = false;
                 break;
             default:
