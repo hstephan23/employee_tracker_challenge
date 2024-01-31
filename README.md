@@ -32,12 +32,16 @@
   ## Usage
   For the simple management of a business to view employees and get a feel for the run of things. Make sure that you have mySql downloaded on your computer to be able to use. The .enc file should look like this:
 
-  DB_USER= ''
+  DB_USER= '' 
+  
   DB_PASSWORD= ''
+
   DB_NAME= ''
+
   DB_HOST= ''
 
   The link to the walkthrough of the program is [here]().
+  
   MIT
 
   https://opensource.org/license/mit/
