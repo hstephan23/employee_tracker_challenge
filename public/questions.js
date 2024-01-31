@@ -13,23 +13,7 @@ class Question {
     };
 
     async updateEmployee() {
-        const sql = `SELECT employee.id AS id, employee.first_name AS first_name, role.title AS title, department.name AS department, role.salary AS salary, employee.manager_id AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id;`;
-        try {
-            const [results] = await this.db.query(sql);
-            const formattedData = results.map(result => ({
-                id: result.id,
-                first_name: result.first_name,
-                title: result.title,
-                department: result.department,
-                salary: result.salary,
-                manager: result.manager
-            }));
-            console.table(formattedData);
-            return results;
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
+        console.log('Updated the employee!');
     };
 
     async viewRoles () {
@@ -50,8 +34,31 @@ class Question {
         }
     };
     
-    async addRole() {
-        console.log('Add role');
+    async addRole(title, salary, department) {
+        try {
+            const connection = await this.db.getConnection();
+            let department_id;
+
+            if (department === 'Engineering') {
+                department_id = 1;
+            } else if (department === 'Web Development') {
+                department_id = 2;
+            } else if (department === 'Administration') {
+                department_id = 3;
+            } else{
+                department_id = 0;
+            }
+
+            const sql = `INSERT INTO role (title, salary, department_id) VALUES ('${title}', '${salary}', ${department_id});`
+            const [results] = await this.db.query(sql);
+            connection.release();
+            console.log("Added the role!", results);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            await this.db.end();
+        }
+        
     };
 
     async viewDepartments() {
@@ -71,7 +78,7 @@ class Question {
     };
 
     async addDepartment() {
-        console.log('Add department');
+        console.log('Added the department!');
     };
 
     async viewEmployees() {
@@ -108,6 +115,27 @@ class Question {
             }
         ])
     };
+
+    static async promptRole() {
+        return inquirer.prompt([
+            {
+                type: 'input',
+                name: 'roleName',
+                message: 'What is the name of the role?'
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'What is the salary of the role?'
+            },
+            {
+               type: 'list',
+               name: 'roleDepartment',
+               message: 'Which department does the role belong to?',
+               choices: ['Engineering', 'Web Development', 'Administration']
+            }
+        ])
+    }
 };
 
 
