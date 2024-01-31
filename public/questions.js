@@ -16,6 +16,21 @@ class Question {
         console.log('Updated the employee!');
     };
 
+    async pullOptionsFromUpdate() {
+        const sql = `SELECT first_name, last_name FROM employee`;
+        try {
+            const [results] = await this.db.query(sql);
+            let options = [];
+            for (let i = 0; i < results.length; i++) {
+                const name = results[i].first_name + ' ' + results[i].last_name;
+                options.push(name);
+            }
+            return options;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     async viewRoles () {
         const sql = `SELECT role.id AS id, role.title AS title, department.name AS department, role.salary AS salary FROM role JOIN department on role.department_id = department.id ORDER BY role.id;`;
         try {
@@ -132,7 +147,7 @@ class Question {
     ;}
 
     async quit() {
-        console.log('Quit');
+        console.log('Goodbye!');
     };
 
     async pullOptionsFromDB() {
@@ -218,8 +233,19 @@ class Question {
             ])
         } catch (error) {
             console.log(error);
-    }
-    }
+        }
+    };
+
+    static async promptUpdate(options) {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employee',
+                message: 'Which employee would you like to update?',
+                choices: options
+            }
+        ])
+    };
 };
 
 

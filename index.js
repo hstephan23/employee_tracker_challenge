@@ -31,6 +31,10 @@ let check = true;
                 await chosenOption.addEmployee(employeeInput.firstName, employeeInput.lastName, employeeInput.position, employeeInput.manager);
                 break;
             case 'update employee role':
+                const updateInstance = new Question();
+                const updateOptions = await updateInstance.pullOptionsFromUpdate();
+                console.log(updateOptions);
+                const updateInput = await Question.promptUpdate(updateOptions);
                 await chosenOption.updateEmployee();
                 break;
             case 'view all roles':
