@@ -27,7 +27,8 @@ let check = true;
             case 'add employee':
                 const employeeInstance = new Question();
                 const options = await employeeInstance.pullOptionsFromDB();
-                const employeeInput = await Question.promptEmployee(options);
+                const managerOptions = await employeeInstance.pullOptionsFromManager();
+                const employeeInput = await Question.promptEmployee(options, managerOptions);
                 await chosenOption.addEmployee(employeeInput.firstName, employeeInput.lastName, employeeInput.position, employeeInput.manager);
                 break;
             case 'update employee role':

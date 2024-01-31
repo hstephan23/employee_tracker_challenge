@@ -10,10 +10,14 @@ VALUES ('Engineer', 99999.00, 001),
     ('Senior Web Developer', 89999.00, 002),
     ('CEO', 149999.00, 003);
 
+INSERT INTO manager (name)
+VALUES ('Isabelle Nelson'),
+    ('Steve Jobs');
+    
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ('Harrison', 'Stephan', 003, 213),
+VALUES ('Harrison', 'Stephan', 003, 2),
     ('Isabelle', 'Nelson', 005, null),
-    ('John', 'Doe', 001, 213),
-    ('Steve', 'Nelson', 003, 213),
-    ('Rick', 'Johnson', 002, 001),
-    ('Steve', 'Jobs', 004, 001);
+    ('John', 'Doe', 001, 2),
+    ('Steve', 'Nelson', 003, 2),
+    ('Rick', 'Johnson', 002, 1),
+    ('Steve', 'Jobs', 004, 1);

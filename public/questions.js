@@ -7,7 +7,7 @@ class Question {
         this.db = mysql.createPool({
                 host: 'localhost',
                 user: 'root',
-                password: '',
+                password: 'kajTun-wykse4-myrmiv',
                 database: 'employee_db'
         });
     };
@@ -142,7 +142,7 @@ class Question {
     };
 
     async viewEmployees() {
-        const sql = `SELECT employee.id AS id, employee.first_name AS first_name, role.title AS title, department.name AS department, role.salary AS salary, employee.manager_id AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY employee.id;`;
+        const sql = `SELECT employee.id AS id, employee.first_name AS first_name, role.title AS title, department.name AS department, role.salary AS salary, manager.name AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id JOIN manager ON employee.manager_id = manager.id ORDER BY employee.id;`;
         try {
             const [results] = await this.db.query(sql);
             const formattedData = results.map(result => ({
@@ -164,10 +164,13 @@ class Question {
     async addEmployee(firstName, lastName, position, manager) {
         try {
             const connection = await this.db.getConnection();
-            const role_id = `SELECT id FROM role WHERE title = '${position}'`
+            const role_id = `SELECT id FROM role WHERE title = '${position}';`
             const [result] = await this.db.query(role_id);
             const id = result[0].id;
-            const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${firstName}', '${lastName}', ${id}, ${manager})`;
+            const managerName = `SELECT id FROM manager WHERE name = '${manager}';`
+            const [managerResult] = await this.db.query(managerName);
+            const managerId = managerResult[0].id;
+            const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${firstName}', '${lastName}', ${id}, ${managerId})`;
             const [results] = await this.db.query(sql);
 
             connection.release();
@@ -181,6 +184,20 @@ class Question {
 
     async quit() {
         console.log('Goodbye!');
+    };
+
+    async pullOptionsFromManager() {
+        const sql = `SELECT name from manager`;
+        try {
+            const [results] = await this.db.query(sql);
+            let options =[];
+            for (let i = 0; i < results.length; i++) {
+                options.push(results[i].name);
+            }
+            return options
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     async pullOptionsFromDB() {
@@ -239,7 +256,7 @@ class Question {
         ])
     };
 
-    static async promptEmployee(options) {
+    static async promptEmployee(options, managerOptions) {
         try {
             return inquirer.prompt([
                 {
@@ -259,9 +276,10 @@ class Question {
                     choices: options
                 },
                 {
-                    type: 'input',
+                    type: 'list',
                     name: 'manager',
-                    message: "What is the employee's manager id?"
+                    message: "Who is the manager?",
+                    choices: managerOptions
                 }
             ])
         } catch (error) {
