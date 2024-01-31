@@ -57,6 +57,24 @@ let check = true;
             case 'view all employees':
                 await chosenOption.viewEmployees();
                 break;
+            case 'update employee manager':
+                console.log('update employee manager');
+                break;
+            case 'view employees by manager':
+                const managerInstance = new Question();
+                const viewManagerOptions = await managerInstance.pullOptionsFromManager();
+                const viewManagerInput = await Question.promptManagerUpdate(viewManagerOptions);
+                await chosenOption.viewByManager(viewManagerInput.manager);
+                break;
+            case 'view employees by department':
+                console.log('employes by department');
+                break;
+            case 'delete department, roles, or employee':
+                console.log('delete');
+                break;
+            case 'view budget of department':
+                console.log('budget');
+                break;
             case 'quit':
                 await chosenOption.quit();
                 check = false;

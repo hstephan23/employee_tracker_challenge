@@ -181,6 +181,23 @@ class Question {
             await this.db.end();
         }
     ;}
+    
+    async viewByManager(manager) {
+        try {
+            const sql = `SELECT employee.first_name as first_name, employee.last_name as last_name, manager.name as Manager FROM employee JOIN manager on employee.manager_id = manager.id WHERE manager.name = '${manager}' ORDER BY manager.name;`
+            const [results] = await this.db.query(sql);
+            const formattedData = results.map(result => ({
+                first_name: result.first_name,
+                last_name: result.last_name,
+                manager: result.Manager
+            }));
+            console.table(formattedData);
+            return results;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    };
 
     async quit() {
         console.log('Goodbye!');
@@ -220,7 +237,7 @@ class Question {
                 type: 'list',
                 name: 'options',
                 message: 'What would you like to do?',
-                choices: ['Add Employee', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'View All Employees', 'Update Employee Role', 'Quit']
+                choices: ['Add Employee', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'View All Employees', 'Update Employee Role', 'Update Employee Manager', 'View Employees By Manager', 'View Employees By Department', 'Delete Department, Roles, or Employee', 'View Budget of Department', 'Quit']
             }
         ])
     };
@@ -300,6 +317,17 @@ class Question {
                 name: 'newPosition',
                 message: 'What is their role going to be?',
                 choices: optionsPosition
+            }
+        ])
+    };
+
+    static async promptManagerUpdate(options) {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'manager',
+                message: 'Which manager would you like to view?',
+                choices: options
             }
         ])
     };

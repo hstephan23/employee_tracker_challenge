@@ -22,7 +22,7 @@ CREATE TABLE role(
 
 CREATE TABLE manager( 
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(30)
+    name VARCHAR(60)
 );
 
 CREATE TABLE employee(

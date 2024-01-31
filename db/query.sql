@@ -45,3 +45,14 @@ ORDER BY role.id;
 SELECT id 
 FROM role 
 WHERE title = 'Junior Web Developer';
+
+-- selecting employees by manager
+SELECT 
+    employee.first_name as 'First Name',
+    employee.last_name as 'Last Name',
+    manager.name as Manager
+FROM employee
+JOIN manager on employee.manager_id = manager.id
+WHERE manager.name = 'Steve Jobs'
+ORDER BY manager.name;
+
