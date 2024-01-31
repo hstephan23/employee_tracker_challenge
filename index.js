@@ -42,7 +42,7 @@ let check = true;
                 break;
             case 'add role':
                 const roleInstance = new Question();
-                const roleOptions = await roleInstance.pullOptionsFromRoles();
+                const roleOptions = await roleInstance.pullOptionsFromDepartment();
                 const roleInput = await Question.promptRole(roleOptions);
                 await chosenOption.addRole(roleInput.roleName, roleInput.salary, roleInput.roleDepartment);
                 break;

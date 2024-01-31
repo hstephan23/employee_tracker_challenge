@@ -81,19 +81,10 @@ class Question {
     async addRole(title, salary, department) {
         try {
             const connection = await this.db.getConnection();
-            let department_id;
+            const departmentSql = `SELECT id FROM department WHERE name = '${department}';`;
+            const [result] = await this.db.query(departmentSql);
 
-            if (department === 'Engineering') {
-                department_id = 1;
-            } else if (department === 'Web Development') {
-                department_id = 2;
-            } else if (department === 'Administration') {
-                department_id = 3;
-            } else{
-                department_id = 0;
-            }
-
-            const sql = `INSERT INTO role (title, salary, department_id) VALUES ('${title}', ${salary}, ${department_id});`
+            const sql = `INSERT INTO role (title, salary, department_id) VALUES ('${title}', ${salary}, ${result[0].id});`
             const [results] = await this.db.query(sql);
             connection.release();
             console.log("Added the role!");
@@ -103,6 +94,20 @@ class Question {
             await this.db.end();
         }
         
+    };
+
+    async pullOptionsFromDepartment() {
+        const sql = `SELECT name FROM department;`;
+        try {
+            const [results] = await this.db.query(sql);
+            let options = [];
+            for (let i = 0; i < results.length; i++) {
+                options.push(results[i].name);
+            }
+            return options
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     async viewDepartments() {
@@ -161,7 +166,6 @@ class Question {
             const connection = await this.db.getConnection();
             const role_id = `SELECT id FROM role WHERE title = '${position}'`
             const [result] = await this.db.query(role_id);
-            console.log(result);
             const id = result[0].id;
             const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${firstName}', '${lastName}', ${id}, ${manager})`;
             const [results] = await this.db.query(sql);
