@@ -40,8 +40,8 @@
 
   DB_HOST= ''
 
-  The link to the walkthrough of the program is [here]().
-  
+  The link to the walkthrough of the program is [here](https://drive.google.com/file/d/1YtsNN8MZIYE_RVHF9mgBIIvhXkL6u5Q5/view?usp=share_link).
+
   MIT
 
   https://opensource.org/license/mit/
